@@ -47,7 +47,8 @@ Your tools: a terminal, internal email system, live news feeds, blue-team dashbo
 <p align="center">
   <video src="media/preview/Kernelians_short.mp4" width="600" autoplay loop muted></video>
 </p>
-### 🗺️ **Interactive map**
+
+### 🗺️ Interactive map**
 
 * Highlighted compromised sites
 * Regional grid impact
@@ -55,7 +56,8 @@ Your tools: a terminal, internal email system, live news feeds, blue-team dashbo
 <p align="center">
   <video src="media/preview/map.mp4" width="600" autoplay loop muted></video>
 </p>
-### 🔒 **Blue-Team mechanics**
+
+### 🔒 Blue-Team mechanics
 
 * Training modules
 * Threat intel briefings
@@ -102,7 +104,9 @@ plants.json     → Master dataset for all facilities
 
 * More terminal challenges
 * Advanced SOC/OT scenarios
-* Steam/Web release 
+* Steam/Web release
+* This roadmap represents planned future enhancements and may evolve over time.
+
 
 ---
 
