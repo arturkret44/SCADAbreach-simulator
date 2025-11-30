@@ -41,20 +41,29 @@ Your tools: a terminal, internal email system, live news feeds, blue-team dashbo
 * Ransomware-triggered international news
 * Country-specific headlines
 * Situational awareness mechanic
-
+<p align="center">
+  <video src="media/preview/news.mp4" width="600" autoplay loop muted></video>
+</p>
+<p align="center">
+  <video src="media/preview/Kernelians_short.mp4" width="600" autoplay loop muted></video>
+</p>
 ### 🗺️ **Interactive map**
 
 * Highlighted compromised sites
 * Regional grid impact
 * Incident chains
-
+<p align="center">
+  <video src="media/preview/map.mp4" width="600" autoplay loop muted></video>
+</p>
 ### 🔒 **Blue-Team mechanics**
 
 * Training modules
 * Threat intel briefings
 * UI panels with tasks
 * Investigation workflows
-
+<p align="center">
+  <video src="media/preview/alerts.mp4" width="600" autoplay loop muted></video>
+</p>
 ---
 
 ## 🎮 Gameplay Overview
