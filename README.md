@@ -91,9 +91,6 @@ plants.json     → Master dataset for all facilities
 
 ## 🏗️ Roadmap
 
-* Multiplayer incident-response race
-* Scoring system + achievements
-* Persistent player profiles
 * More terminal challenges
 * Advanced SOC/OT scenarios
 * Steam/Web release 
@@ -101,9 +98,11 @@ plants.json     → Master dataset for all facilities
 ---
 
 ## 🛡️ License
+This project is distributed under a proprietary license.
+All rights reserved.
 
-MIT License — open for personal + educational use.
-Commercial licensing available (OT/SCADA training organizations).
+No part of the source code, assets, or content may be copied, modified,
+or redistributed without explicit permission from the author.
 
 ---
 
@@ -122,6 +121,3 @@ PRs welcome — especially:
 
 
 👉 https://scadabreach.com
-
-
-Powiedz tylko “**róbmy dalej**”.
