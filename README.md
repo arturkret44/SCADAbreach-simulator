@@ -42,10 +42,7 @@ Your tools: a terminal, internal email system, live news feeds, blue-team dashbo
 * Country-specific headlines
 * Situational awareness mechanic
 <p align="center">
-  <video src="media/preview/news.mp4" width="600" autoplay loop muted></video>
-</p>
-<p align="center">
-  <video src="media/preview/Kernelians_short.mp4" width="600" autoplay loop muted></video>
+  <img src="media/preview/news.gif" width="600" />
 </p>
 
 ### 🗺️ Interactive map**
@@ -65,7 +62,7 @@ Your tools: a terminal, internal email system, live news feeds, blue-team dashbo
 * UI panels with tasks
 * Investigation workflows
 <p align="center">
-  <video src="media/preview/alerts.mp4" width="600" autoplay loop muted></video>
+  <img src="media/preview/alerts.gif" width="600" />
 </p>
 ---
 
