@@ -1,0 +1,1259 @@
+:root{
+--bg:#0f1115; --panel:#11141a; --tab:#1a1f29; --tab-active:#242b36; --tab-hover:#202633;
+--text:#e5e7eb; --muted:#9aa3b2; --accent:#8ab4f8; --border:#232837; --radius:12px;
+--shadow:0 8px 24px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0; background:var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+
+
+.app{display:grid; grid-template-rows:auto 1fr; height:100dvh; max-height:100dvh}
+
+
+/* Pasek zakładek */
+.tabbar{display:flex; align-items:center; gap:8px; padding:10px 12px 6px; border-bottom:1px solid var(--border); background:linear-gradient(#0e131a,#0b0f14)}
+.tab{position:relative; display:flex; align-items:center; gap:10px; max-width:240px; min-width:120px; padding:8px 12px; border:1px solid var(--border); border-bottom:none; background:var(--tab); color:var(--text); border-top-left-radius:10px; border-top-right-radius:10px; box-shadow:0 1px 0 rgba(255,255,255,.04) inset; cursor:pointer; user-select:none}
+.tab:hover{background:var(--tab-hover)}
+.tab.is-active{background:var(--tab-active); z-index:2}
+.tab .tab-title{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px}
+.tab .tab-icon{opacity:.9}
+.tab .tab-close{margin-left:2px; font-weight:700; opacity:.6}
+.tab.is-active .tab-close{opacity:.9}
+.tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+
+.tabbar-spacer{flex:1 1 auto}
+.tab-add{width:30px; height:30px; display:grid; place-items:center; border-radius:50%; border:1px solid var(--border); background:var(--tab); color:var(--text); cursor:pointer}
+.tab-add:hover{background:var(--tab-hover)}
+
+
+/* Obszar paneli */
+.viewport{position:relative; overflow:auto; background:var(--panel)}
+.panel{padding:24px; min-height:100%; box-shadow:var(--shadow)}
+.panel h1{margin:0 0 12px; font-size:20px}
+.panel[hidden]{display:none}
+
+
+/* Scrollbar (opcjonalnie) */
+.viewport::-webkit-scrollbar{height:10px; width:10px}
+.viewport::-webkit-scrollbar-thumb{background:#2a3240; border-radius:8px}
+
+/* --- Terminal (panel content) --- */
+.terminal{
+  background:#0d0d0d;
+  color:var(--text);
+  font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  width:min(900px, 100%);
+  overflow:hidden;
+}
+
+.terminal-header{
+  background:#2b2b2b;
+  padding:6px 10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border-bottom:1px solid #1f1f1f;
+}
+.terminal-header .dot{width:10px; height:10px; border-radius:50%; display:inline-block}
+.terminal-header .dot.red{background:#ff5f56}
+.terminal-header .dot.yellow{background:#ffbd2e}
+.terminal-header .dot.green{background:#27c93f}
+.terminal-header .title{margin-left:auto; font-size:12px; color:#cfcfcf; letter-spacing:.2px}
+
+.terminal-body{
+  padding:10px;
+  height:560px;              /* możesz podnieść/obniżyć */
+  overflow:auto;
+  white-space:pre-wrap;
+  line-height:1.4;
+  background:#0e0e0e;
+}
+
+.terminal-input{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-top:1px solid #1f1f1f;
+  background:#141414;
+}
+.terminal-input .prompt{color:var(--accent)}
+#terminal-input{
+  flex:1;
+  background:transparent;
+  color:var(--text);
+  border:none;
+  outline:none;
+  font:inherit;
+  caret-color:var(--accent);
+}
+#terminal-input::placeholder{color:var(--muted)}
+
+/* Scrollbar w terminalu (opcjonalnie) */
+.terminal-body::-webkit-scrollbar{height:10px; width:10px}
+.terminal-body::-webkit-scrollbar-thumb{background:#303845; border-radius:8px}
+
+/* Layout: terminal + map side-by-side */
+.panel-row{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+}
+
+.side-map{
+  flex: 1 1 auto;
+  max-width: 800px;
+  height: 400px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#0d0f14;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+#world-map{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+
+/* Responsywka: gdy za wąsko – mapę daj pod terminalem */
+@media (max-width: 1200px){
+  .panel-row{ flex-direction:column; }
+  .side-map{ width:100%; max-width:none; height:480px; }
+  #world-map{ width:100%; height:100%; }
+}
+/* Mini news under terminal */
+.mini-news{
+  margin-top:16px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#0d0f14;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  overflow:hidden;
+  width:min(900px, 100%); /* taka sama szerokość jak terminal */
+}
+
+.mini-news-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; border-bottom:1px solid #1f2532;
+  background:linear-gradient(#141922,#10151d);
+  font-weight:600; color:#cfd7e6;
+}
+.mini-news-header a{ color:var(--muted); text-decoration:none; font-weight:500; }
+.mini-news-header a:hover{ text-decoration:underline; }
+
+.mini-news-list{ max-height:220px; overflow:auto; padding:8px 10px; }
+
+.mini-news-item{
+  display:grid; grid-template-columns: 1fr auto; gap:8px;
+  padding:8px 4px; border-bottom:1px solid #141a24;
+}
+.mini-news-item:last-child{ border-bottom:none; }
+.mini-news-item .title{ font-weight:600; color:#e6ebf5; }
+.mini-news-item .lead{ color:#b9c2d3; font-size:13px; }
+.mini-news-item .meta{ color:#9aa3b2; font-size:12px; white-space:nowrap; }
+.mini-badge{ font-size:11px; padding:3px 6px; border-radius:999px; border:1px solid #2a3142; background:#121926; }
+.mini-sev-high{ color:#ff89a6; box-shadow:0 0 0 1px rgba(255,0,80,.18) inset; }
+.mini-sev-med{  color:#ffd66b; box-shadow:0 0 0 1px rgba(255,200,0,.18) inset; }
+.mini-sev-low{  color:#8ff5c3; box-shadow:0 0 0 1px rgba(0,255,120,.18) inset; }
+
+
+/* Ulepszenie klikalności krzyżyka w kartach */
+.tab .tab-close{
+  margin-left:4px;
+  padding:0 6px;
+  line-height:1;
+  border-radius:6px;
+  font-weight:700;
+  opacity:.7;
+}
+.tab .tab-close:hover{ background:#2a3240; opacity:1 }
+
+/* ===== News page layout ===== */
+.news-page{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  padding:20px;
+}
+
+.news-hero{
+  display:flex;
+  gap:20px;
+}
+.hero-article{
+  flex:1.4;
+  background:#11141a;
+  padding:12px;
+  border-radius:10px;
+}
+.hero-article img{
+  width:100%; border-radius:8px; margin-bottom:8px;
+}
+.hero-article h2{ margin:0 0 8px; font-size:22px; }
+.hero-article p{ margin:0; color:var(--muted); }
+
+.hero-side{
+  flex:1; display:flex; flex-direction:column; gap:10px;
+}
+.hero-side article{
+  background:#11141a;
+  padding:10px;
+  border-radius:8px;
+}
+.hero-side h3{ margin:0 0 4px; font-size:16px; }
+
+.news-content{
+  display:flex;
+  gap:20px;
+}
+.news-list{
+  flex:3; display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  gap:15px;
+}
+.news-list article{
+  background:#11141a;
+  padding:10px;
+  border-radius:8px;
+}
+.news-list h4{ margin:0 0 6px; font-size:15px; }
+
+.news-sidebar{
+  flex:1; display:flex; flex-direction:column; gap:20px;
+}
+
+.badges{ display:flex; gap:8px; align-items:center; margin:6px 0 }
+.badge{ font-size:12px; line-height:1; padding:6px 8px; border-radius:999px; border:1px solid #2a3142; background:#121926; color:#b8c2d6 }
+.sev-low{ box-shadow:0 0 0 1px rgba(0,255,120,.15) inset; color:#8ff5c3 }
+.sev-med{ box-shadow:0 0 0 1px rgba(255,200,0,.15) inset; color:#ffd66b }
+.sev-high{ box-shadow:0 0 0 1px rgba(255,0,80,.15) inset; color:#ff89a6 }
+.meta{ font-size:12px; color:#9aa3b2 }
+
+.news-heading{
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  color: #fff;             /* biały, pasuje do dark mode */
+  border-bottom: 2px solid #2a3142;
+  padding-bottom: 6px;
+}
+
+.news-sections{ display:flex; flex-direction:column; gap:30px; margin-top:10px; }
+.news-category-heading{
+  font-size:20px; font-weight:600; margin:0 0 12px; color:#fff;
+  border-left:4px solid #2a3142; padding-left:10px;
+}
+.news-category-grid{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:15px;
+}
+.news-category-grid article{ background:#11141a; padding:10px; border-radius:8px; }
+.news-category-grid h4{ margin:0 0 6px; font-size:15px; }
+.news-category-grid p{ margin:0; color:var(--muted); }
+
+
+/* --- News media (hero + thumbs) --- */
+.hero-media {
+  width: 100%;
+  max-width: 900px;   /* lub 720px – jak wolisz */
+  aspect-ratio: 16/9;
+  background: #0b0f14;
+  border-radius: 10px;
+  overflow: hidden;   /* możesz zostawić, bo video już się mieści */
+  margin: 0 auto 6px; /* wyśrodkowane */
+}
+
+.hero-media img,
+.hero-media img,
+.hero-media video{
+  width: 100%;
+  height: auto;       /* NIE wymuszamy pełnej wysokości kontenera */
+  max-height: 100%;
+  object-fit: contain;/* pokaż cały obraz, nie przycinaj */
+  display: block;
+}
+
+/* miniatury w gridzie */
+.news-card-thumb{
+  width:100%;
+  aspect-ratio:16/9;
+  background:#0b0f14;
+  border-radius:6px;
+  overflow:hidden;
+  margin-bottom:8px;
+}
+.news-card-thumb img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+
+
+
+/* ===== Ad slots ===== */
+.ad{
+  background:#222630;
+  color:#9aa3b2;
+  font-size:13px;
+  font-weight:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:2px dashed #444b57;
+  border-radius:8px;
+  min-height:80px;
+}
+.ad-hero{ min-height:250px; }
+.ad-sidebar{ min-height:250px; }
+.ad-footer{ min-height:90px; }
+.ad-sidebar {
+  display: block;
+}
+.ad-sidebar img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}
+
+
+/* ===== Mail layout ===== */
+.mail-app{ display:grid; grid-template-columns: 260px 1fr; gap:16px; height:100%; }
+.mail-sidebar{ border:1px solid var(--border); border-radius:10px; background:#0d0f14; padding:12px; display:flex; flex-direction:column; gap:12px; }
+.compose-btn{ background:#1a2331; color:#e6ebf5; border:1px solid #2a3142; border-radius:8px; padding:10px; cursor:pointer; }
+.compose-btn:hover{ background:#202b3d; }
+.mail-folders{ display:flex; flex-direction:column; gap:6px; }
+.mail-folders button{ text-align:left; padding:8px 10px; border-radius:8px; border:1px solid transparent; background:transparent; color:#cfd7e6; cursor:pointer; }
+.mail-folders button.is-active, .mail-folders button:hover{ background:#141a24; border-color:#232a3a; }
+.mail-folders .badge{ float:right; font-size:12px; padding:2px 8px; border-radius:999px; border:1px solid #2a3142; color:#9fc8ff; }
+
+.mail-main{ display:flex; flex-direction:column; gap:12px; min-width:0; }
+.mail-toolbar{ display:flex; gap:10px; align-items:center; border:1px solid var(--border); border-radius:10px; padding:10px; background:#0d0f14; }
+.mail-toolbar input[type="search"]{ flex:1; background:#0b1017; border:1px solid #222a3b; border-radius:8px; padding:8px 10px; color:#e6ebf5; }
+.mail-toolbar .toolbar-actions button{ margin-left:6px; padding:8px 10px; border:1px solid #2a3142; border-radius:8px; background:#121926; color:#cfd7e6; }
+
+.mail-content{ display:grid; grid-template-columns: 380px 1fr; gap:12px; min-height:0; flex:1; }
+.mail-list{ list-style:none; margin:0; padding:0; overflow:auto; border:1px solid var(--border); border-radius:10px; background:#0d0f14; }
+.mail-item{ display:grid; grid-template-columns: 20px 1fr auto; gap:10px; padding:12px; border-bottom:1px solid #141a24; cursor:pointer; }
+.mail-item:hover{ background:#111722; }
+.mail-item .star{ opacity:.6 }
+.mail-item .star.is-on{ color:#ffd66b; opacity:1 }
+.mail-item .from{ font-weight:600; }
+.mail-item .subject{ color:#dfe6f3; }
+.mail-item .snippet{ color:#9aa3b2; }
+.mail-item .time{ color:#9aa3b2; font-size:12px; white-space:nowrap; }
+.mail-item.unread .subject{ font-weight:700; }
+.mail-item.unread .from{ font-weight:700; }
+
+.mail-view{ overflow:auto; border:1px solid var(--border); border-radius:10px; background:#0d0f14; padding:16px; }
+.mail-view h2{ margin:0 0 6px; }
+.mail-view .meta{ color:#9aa3b2; margin-bottom:12px; }
+.mail-view .body{ line-height:1.6; color:#cfd7e6; white-space:pre-wrap; }
+.mail-view .placeholder{ color:#9aa3b2; }
+/* Niebieskie podświetlenie zakładki gdy przyszła nowa poczta */
+.tab.tab-has-unread {
+  background: #1d4ed8;      /* niebieskie tło */
+  color: #fff;              /* biały tekst */
+  border-color: #1d4ed8;    /* jeśli używasz borderów pod spodem */
+}
+
+/* Jeśli masz .tab.is-active z innym stylem, możesz go lekko wzmocnić */
+.tab.is-active.tab-has-unread {
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.7);
+}
+
+
+@media (max-width: 1100px){
+  .mail-app{ grid-template-columns: 1fr; }
+  .mail-content{ grid-template-columns: 1fr; }
+}
+/* Top banner – pełna szerokość contentu, bez przycinania */
+.ad-top {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  min-height: 140px;   /* wizualna wysokość dla 1300×160; dopasuj, jeśli zmienisz */
+  background: none;
+  border: none;
+}
+
+.ad-top img {
+  display: block;
+  width: 100%;
+  max-width: calc(100vw - 88px); /* = viewport - (2*24px panel + 2*20px news-page) */
+  height: auto;
+  aspect-ratio: 8 / 1; /* utrzymuj proporcje */
+  object-fit: contain;  /* żadnego przycinania */
+  border-radius: 6px;
+  margin: 0 auto;
+}
+.ad-top img {
+  max-width: min(calc(100vw - 88px), 1600px);
+}
+
+
+/* Blue Team */
+.bt-logs table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.bt-logs th, .bt-logs td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #141a24;
+}
+
+.bt-logs tbody tr:hover {
+  background: #111722;
+}
+
+.bt-alerts .alert-card {
+  border: 1px solid #2a3142;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #121926;
+}
+
+.bt-alerts .alert-card .sev {
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+.sev-low { background:#1e3a2c; color:#65f3a3; }
+.sev-med { background:#3a321e; color:#f3c565; }
+.sev-high{ background:#3a1e1e; color:#f36565; }
+
+/* Power Plant */
+.power-app {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 16px;
+  height: 100%;
+}
+
+.pp-indicators, .pp-charts, .pp-controls {
+  background:#0d0f14;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  overflow:auto;
+}
+
+.pp-indicators ul {
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+.pp-indicators li { margin:6px 0; }
+
+.status-normal { color:#65f3a3; }
+.status-warning { color:#f3c565; }
+.status-critical { color:#f36565; }
+
+.pp-controls .danger {
+  display:block;
+  width:100%;
+  margin-bottom:12px;
+  padding:10px;
+  border-radius:8px;
+  background:#3a1e1e;
+  color:#f36565;
+  font-weight:bold;
+  border:1px solid #5c2a2a;
+  cursor:pointer;
+}
+.pp-controls .switches label { display:block; margin:8px 0; }
+.pp-controls .alarm { margin-top:12px; padding:8px; border-radius:8px; background:#141a24; color:#9aa3b2; }
+.power-app{ display:grid; grid-template-columns: 280px 1.6fr 1.2fr; gap:16px; height:100%; }
+.pp-list, .pp-details, .pp-controls-wrap{ background:#0d0f14; border:1px solid var(--border); border-radius:10px; padding:12px; overflow:auto; }
+#pp-search{ width:100%; padding:8px 10px; border-radius:8px; border:1px solid #222a3b; background:#0b1017; color:#e6ebf5; margin-bottom:10px; }
+#pp-list{ list-style:none; margin:0; padding:0; }
+#pp-list li{ padding:8px 10px; border-radius:8px; cursor:pointer; }
+#pp-list li:hover{ background:#111722; }
+#pp-list li.is-active{ background:#141a24; border:1px solid #232a3a; }
+.pp-meta{ display:flex; gap:8px; margin:8px 0 12px; }
+.badge{ font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid #2a3142; background:#121926; color:#b8c2d6; }
+
+
+/* === Responsywność / ujednolicenie wyglądu na różnych ekranach === */
+
+/* 1) Delikatne skalowanie typografii z rozdzielczością */
+html{
+  font-size: clamp(14px, 1.05vw, 16px); /* małe laptopy → 14px, standard → ~15–16px */
+}
+
+/* 2) Spójna szerokość obszaru treści (panele) – centrum, max szerokość */
+.viewport{
+  display:block;
+}
+.viewport .panel{
+  max-width: none;  
+  margin: 0 ;
+  padding: 24px ; 
+}
+
+/* 3) Terminal – wypełnia szerokość panelu, ale ma górny limit */
+.terminal{
+  width: none;
+  margin: 0;  
+  display: inline-block;
+}
+.terminal-body{
+  height: 560px;        /* Twoje ustawienie */
+  max-height: 70vh;     /* ale nie więcej niż 70% wysokości okna */
+}
+
+/* 4) Pasek zakładek – dobre zachowanie przy mniejszej szerokości */
+.tabbar{
+  gap: 6px;
+  padding: 10px 12px 6px;
+  overflow-x: auto;     /* jeśli się nie mieszczą – przewijane poziomo */
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin; /* Firefox */
+}
+.tabbar::-webkit-scrollbar{height:8px}
+.tabbar::-webkit-scrollbar-thumb{background:#2a3240; border-radius:8px}
+
+/* 5) Karty – trochę węższe minimum na mniejszych ekranach */
+@media (max-width: 1100px){
+  .tab{ min-width: 110px; max-width: 200px; }
+  .tab .tab-title{ max-width: 120px; }
+}
+
+/* 6) Bardzo wąskie ekrany – ukryj tytuł, zostaw ikonki (opcjonalnie) */
+@media (max-width: 720px){
+  .tab{ min-width: 44px; padding: 8px 10px; gap: 6px; }
+  .tab .tab-title{ display: none; }   /* tylko ikona – jak w mobilnych przeglądarkach */
+}
+
+@media (max-width: 900px){
+  .news-hero{ flex-direction: column; }
+  .hero-media{ max-height: 220px; } /* niech będzie niższe na mobilu/małych laptopach */
+}
+/* Archive.org iframe */
+.embed-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.embed-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* Gdy w hero jest iframe z Archive.org – nie ograniczaj wysokości kontenera */
+.hero-media.is-embed{
+  aspect-ratio: auto;   /* wyłącz wbudowane 16:9 na kontenerze */
+  max-height: none;     /* zdejmij clamp(...) */
+  overflow: visible;    /* nic nie ucinaj */
+}
+
+/* Sam player pilnujemy ratio w środku */
+.hero-media.is-embed .embed-wrap{
+  aspect-ratio: 16/9;   /* to utrzyma 16:9 dla iframa */
+}
+
+/* Dla porządku: img/video nadal działają jak wcześniej */
+/* Mniejsze obrazki w kolumnie bocznej hero */
+/* Estetyczna miniatura w kolumnie bocznej hero */
+/* --- Poprawione miniatury w kolumnie bocznej hero --- */
+
+/* --- Hero-side: miniatura mniejsza o ~50% względem oryginału --- */
+.hero-side .news-card-thumb{
+  width: 20%;           /* było 75% → teraz dwa razy mniejsze */
+  max-width: 300px;     /* górny limit szerokości (możesz zmniejszyć do 280px) */
+  aspect-ratio: auto;   /* zachowuje naturalne proporcje obrazu */
+  margin: 0 auto 6px 0; /* wyrównaj do lewej, zostaw delikatny odstęp pod spodem */
+}
+
+.hero-side .news-card-thumb img{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;  /* nic nie przycina */
+  background: #0b0f14;
+  border-radius: 6px;
+}
+
+.ad-top video {
+  width: 100%;
+  max-width: calc(100vw - 88px);
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+}
+@keyframes flashNews {
+  0%, 100% { background-color: inherit; color: inherit; }
+  50% { background-color: #f36565; color: #fff; }
+}
+
+.flash-news {
+  animation: flashNews 0.8s ease-in-out infinite;
+}
+/* Click-to-load dla hero embed */
+.embed-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #0b0f14;
+  display: block;
+}
+.embed-wrap.is-lazy {
+  display: grid;
+  place-items: center;
+}
+.embed-play{
+  font-size: 28px;
+  line-height: 1;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+.embed-wrap.is-lazy:hover .embed-play{
+  transform: scale(1.06);
+  background: rgba(0,0,0,.7);
+}
+/* === Newspaper look for modal article === */
+.nv-modal-backdrop{ /* zostaje jak jest */ }
+
+/* kartka papieru na ciemnym tle */
+.nv-modal{
+  background: #f6f6f4;           /* “papier” */
+  color: #111;
+  border: 1px solid rgba(0,0,0,.08);
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  border-radius: 12px;
+  padding: 28px 28px 32px;
+  max-width: min(1000px, 96vw);
+  width: 96vw;
+  line-height: 1.65;
+  font-family: "Georgia","Times New Roman", ui-serif, serif;
+  text-rendering: optimizeLegibility;
+}
+
+/* pasek tytułu + delikatny podział */
+.nv-modal h1{
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin: 0 0 6px;
+}
+.nv-modal .nv-byline{
+  font: 600 12px/1.2 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color: #6b7280;                /* szary */
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin: 0 0 14px;
+}
+.nv-modal .nv-byline::after{
+  content: "";
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg,#ddd,#eee 40%, transparent 80%);
+  margin: 10px 0 2px;
+}
+
+/* właściwa treść w kolumnach */
+.nv-modal .nv-body{
+  column-width: 320px;           /* celowana szerokość kolumny */
+  column-gap: 32px;
+  column-fill: balance;
+  text-align: justify;
+  hyphens: auto;                  /* dzielenie wyrazów */
+  orphans: 3; widows: 3;
+  font-size: clamp(15px, 1.05vw, 17px);
+}
+
+/* akapity */
+.nv-modal .nv-body p{
+  margin: 0 0 .9em;
+}
+
+/* drop-cap w pierwszym akapicie */
+.nv-modal .nv-body p:first-of-type::first-letter{
+  float: left;
+  font-size: 3.2em;
+  line-height: .9;
+  padding: .04em .12em 0 0;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* obrazy, tabele, elementy “niełamliwe” */
+.nv-modal .nv-body img,
+.nv-modal .nv-body figure,
+.nv-modal .nv-body table,
+.nv-modal .nv-body blockquote{
+  break-inside: avoid;
+  page-break-inside: avoid;
+  margin: .6em 0;
+  max-width: 100%;
+}
+.nv-modal .nv-body figure img{ width:100%; height:auto; display:block; border-radius: 4px; }
+.nv-modal .nv-body figcaption{
+  font-size: .9em; color:#6b7280; text-align:center; margin-top:.3em;
+}
+
+/* wyróżniony cytat w stylu prasowym */
+.nv-modal .nv-body .pullquote{
+  font: italic 700 1.15em/1.35 Georgia, serif;
+  color:#374151;
+  padding: .4em .8em;
+  border-left: 3px solid #d1d5db;
+  background:#f0f1f3;
+  margin: .6em 0;
+}
+
+/* pozioma reguła – cienka, gazetowa */
+.nv-modal .nv-body hr{
+  border:0; height:1px;
+  background: linear-gradient(90deg, transparent, #ddd 30%, #ddd 70%, transparent);
+  margin: .8em 0;
+}
+
+/* link jako “artykułowy”: delikatne podkreślenie */
+.nv-modal .nv-body a{
+  color:#0b57d0; text-decoration: underline; text-underline-offset: 2px;
+}
+
+/* przycisk zamknięcia większy (łatwiej trafić) */
+.nv-close{
+  top: 8px; right: 10px;
+  font-size: 22px;
+  width: 34px; height: 34px;
+  display:grid; place-items:center;
+  border-radius: 8px;
+  color:#374151;
+  background: transparent;
+}
+.nv-close:hover{ background:#e7e7ea; }
+
+/* responsywka: na wąskich ekranach wyłącz kolumny i drop-cap */
+@media (max-width: 820px){
+  .nv-modal{
+    padding: 20px 16px 22px;
+    width: 94vw;
+  }
+  .nv-modal .nv-body{ column-count: 1; column-width: auto; column-gap: 0; text-align: start; }
+  .nv-modal .nv-body p:first-of-type::first-letter{
+    float:none; font-size: inherit; padding:0;
+  }
+}
+
+/* tryb drukowania (opcjonalnie: Ctrl+P = czysta kartka) */
+@media print{
+  .nv-modal{ box-shadow:none; border:none; background:#fff; color:#000; }
+  .nv-modal-backdrop{ display:none !important; }
+}
+/* === Article footer (newspaper microtype) === */
+.nv-footer{
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #e3e4e6;
+  column-span: all;            /* stopka pod wszystkimi kolumnami */
+  font: 12px/1.35 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  color:#6b7280;
+}
+.nv-footer .line{
+  display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center;
+  margin: 4px 0;
+}
+.nv-footer .muted{ color:#94a3b8; }
+.nv-footer .brand{ font-weight:700; color:#374151; }
+.nv-footer .sep{ opacity:.5; }
+.nv-footer .id{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  letter-spacing:.02em;
+}
+/* Bezpieczny rozmiar placeholdera w hero aby nie przykrywał środkowej sekcji */
+.hero-media {
+  position: relative;
+  width: 100%;
+  min-height: 160px;   /* gwarantowana wysokość - nie będzie nagle 0px lub gigant */
+  background: #0b0f14;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* gdy jest lazy embed placeholder - daj mu czytelny wygląd i nie blokuj klików */
+.embed-wrap.is-lazy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  background: #0b0f14;
+}
+
+/* przycisk play ma normalne pointer-events (klikalny) */
+.hero-media .embed-play { pointer-events: auto; }
+/* Baner obrazkowy pod hero */
+.ad-hero {
+  padding: 0;                 /* bez wewnętrznych odstępów */
+  border: none;               /* usuń przerywaną ramkę */
+  background: transparent;    /* tło zbędne przy obrazku */
+  min-height: 0;              /* wysokość wyniknie z obrazka */
+}
+
+.ad-hero img {
+  display: block;
+  width: 100%;
+  height: auto;               /* zachowaj proporcje */
+  aspect-ratio: 970 / 250;    /* wygląda jak klasyczny 970×250 */
+  object-fit: cover;          /* ewentualnie lekko przytnie, nie rozciągnie */
+  border-radius: 8px;
+}
+/* Baner Talk Show – zmniejszony */
+.ad-hero img[src*="Talk_show.png"] {
+  max-width: 50%;        /* np. 85% szerokości kontenera */
+  height: auto;
+  object-fit: contain;   /* nie przycina, tylko dopasowuje */
+  display: block;
+  margin: 0 auto;        /* wyśrodkuj */
+  border-radius: 8px;
+}
+.hero-media.is-embed {
+  transform: scale(0.85);
+  transform-origin: top center;
+}
+/* === Hero video caption === */
+.hero-caption {
+  font-size: 13px;
+  color: #9aa3b2;
+  text-align: center;
+  margin: 6px 0 10px;
+  font-style: italic;
+  opacity: 0.85;
+  margin-bottom: 4px !important;  /* było 10px */
+}
+/* === Divider between main video and sidebar articles === */
+.news-hero {
+  gap: 28px; /* trochę większy odstęp */
+}
+
+.hero-side {
+  border-left: 1px solid #2a3142; /* cienka, półprzezroczysta linia */
+  padding-left: 20px;              /* lekki margines po lewej od linii */
+}
+.hero-side article {
+  border-bottom: 1px solid #1a1f29;
+  padding-bottom: 10px;
+}
+.hero-side article:last-child {
+  border-bottom: none;
+}
+/* === Styl nagłówka głównego artykułu (BBC News – The President's Path) === */
+.hero-article h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  line-height: 1.25;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* lead pod tytułem */
+.hero-article p {
+  color: #b3b8c3;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+
+/* poprawa rozmieszczenia całego bloku hero */
+.hero-article {
+  padding: 16px 18px 20px 18px;
+  background: #11141a;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+/* zmniejszamy przerwę między filmem a tytułem */
+.hero-media,
+.embed-wrap {
+  margin-bottom: 4px !important;  /* było ~16px */
+}
+
+/* dopasowanie przycisku play i iframe */
+.hero-media iframe {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* opcjonalnie (jeśli nadal za duży odstęp) */
+.hero-article h2 {
+  margin-top: 2px !important;     /* było 10px */
+}
+/* 1) Usuń skalowanie playera, które zostawia „martwą” przestrzeń */
+.hero-media.is-embed {
+  transform: none !important;
+  transform-origin: initial !important;
+}
+
+/* 2) Zbij przerwę pod playerem (wrapper z iframem) */
+.hero-article .embed-wrap {
+  margin-bottom: 4px !important;
+}
+
+/* 3) Zbij odstęp badge'ów (są między playerem a tytułem) */
+.hero-article .badges {
+  margin: 4px 0 2px !important;
+}
+
+/* 4) Zmniejsz margines separatora nad tytułem lub go wyłącz */
+.hero-article::before {
+  /* jeśli chcesz zostawić kreskę: */
+  margin: 4px 0 6px !important;
+  /* a jeśli wolisz całkiem bez separatora, odkomentuj: */
+  /* display: none !important; */
+}
+
+/* 5) Tytuł tuż przy badge'ach */
+.hero-article h2 {
+  margin-top: 0 !important;
+}
+
+.bt-training {
+  padding: 10px;
+}
+.bt-training-section summary {
+  cursor: pointer;
+  padding: 6px;
+  font-size: 14px;
+}
+.bt-training-section > div {
+  padding: 8px;
+  background: #1a2332;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+.bt-training ul, 
+.bt-training ol {
+  margin-left: 20px;
+}
+.bt-training a {
+  color: #9fc8ff;
+  text-decoration: underline;
+}
+/* Blue Team */
+.blue-team-app {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1.5fr;
+  gap: 16px;
+  height: 70vh;      /* <- KLUCZOWA ZMIANA */
+  align-items: stretch;
+}
+.bt-logs,
+.bt-alerts,
+.bt-training {
+  background: #0d0f14;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* klucz: jeden scrollbar na kolumnę, zawsze ten sam */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable; /* rezerwuje miejsce na scrollbar → brak „skoków” szerokości */
+}
+
+.pp-controls .danger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #2a2f3a;
+  color: #9aa3b2;
+  border-color: #3a4250;
+}
+.pp-telemetry-help .legend-item{
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.pp-telemetry-help .status-dot{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  margin-right:6px;
+  vertical-align:middle;
+}
+.pp-mood{
+  margin-top: 14px;
+  font-size: 13px;
+}
+
+.pp-mood-label{
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-muted, #9aa3b2);
+}
+
+.pp-mood-bar{
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.pp-mood-bar-inner{
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: #45c46b;
+  transition: width 0.4s ease-out, background-color 0.4s ease-out;
+}
+
+.pp-mood-text{
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: #9aa3b2;
+}
+
+.pp-mood-value{
+  font-weight: 600;
+  color: #e2e6f0;
+}
+
+
+/* === Entertainment Buzz – jasna karta na ciemnym layoucie === */
+.hero-side-ticker {
+  background: #2b2100 !important;   /* jasne tło */
+  color: #ffffff;                   /* ciemny tekst */
+
+  padding: 18px 22px;
+  border-radius: 10px;
+  margin-bottom: 14px;
+  border: 1px solid #cbd5e1;        /* delikatna ramka */
+  height: 260px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;          /* pionowo na środku */
+  align-items: center;              /* poziomo na środku */
+  text-align: center;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+/* cienka ciemna linia u góry – „news box” */
+.hero-side-ticker::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 3px solid #111827;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* header + LIVE pill */
+.hero-side-ticker-header {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.hero-side-ticker-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ENTERTAINMENT BUZZ */
+.hst-label {
+  font-size: 20px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #ffffff; 
+}
+
+/* LIVE pill */
+.hst-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 18px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: #111827;
+  color: #f9fafb;
+}
+
+.hst-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #f97373;
+  box-shadow: 0 0 6px rgba(248, 113, 113, 0.9);
+}
+
+/* tekst newsa */
+.hero-side-ticker-text {
+  margin: 0;
+  font-size: 18px;
+  color: #ffffff;
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+#bt-toolbar button {
+  display: none !important;
+}
+
+/* === DISCLAIMER MODAL === */
+.disclaimer-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;              /* 👈 DOMYŚLNIE UKRYTE */
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+}
+
+.disclaimer-modal {
+  background: #11141a;
+  border: 1px solid #2a3142;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 520px;
+  width: 90%;
+  color: #e6ebf5;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+  text-align: left;
+  font-size: 15px;
+}
+
+.disclaimer-modal h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.disclaimer-modal p {
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.disclaimer-command {
+  background: #0d0f14;
+  border: 1px solid #232a3a;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: ui-monospace, monospace;
+  margin-bottom: 14px;
+}
+
+.disclaimer-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+#disclaimer-accept {
+  width: 100%;
+  padding: 10px;
+  background: #1a2331;
+  border: 1px solid #2a3142;
+  border-radius: 8px;
+  color: #e6ebf5;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#disclaimer-accept:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#disclaimer-accept:hover:not(:disabled) {
+  background: #243044;
+}
+
+/* 1) Domyślnie bez podkreślenia w kartach newsów */
+.news-list article,
+.news-list article * {
+  text-decoration: none;
+}
+
+/* 2) Podkreślenie TYLKO tytułów w gridzie */
+.news-list article h4 {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* (opcjonalnie) podkreślenie tytułów w innych miejscach: hero + prawa kolumna */
+.hero-article h2,
+.hero-side article h3 {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+
+/* Domyślnie ukrywamy komunikat — na desktopie */
+#mobile-warning {
+  display: none;
+  font-size: 1.2rem;
+  color: #ff5757;
+  text-align: center;
+  padding: 2rem;
+  background: #0c0d11;
+}
+
+/* Jeśli ekran ma mniej niż 900px szerokości: */
+@media (max-width: 900px) {
+  body > *:not(#mobile-warning) {
+    display: none !important;
+  }
+
+  #mobile-warning {
+    display: block;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0c0d11;
+    height: 100vh;
+    margin: 0;
+  }
+}

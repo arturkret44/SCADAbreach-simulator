@@ -1,0 +1,572 @@
+<!-- 
+  Oh… so you decided to peek at the source code? 👀
+
+  Sure, you can read it — nothing is hidden here.
+  But just remember:
+
+     - There are no secret “developer shortcuts” in the code.
+     - Every puzzle can be solved through normal gameplay.
+     - Looking here won’t help you — it only spoils the fun.
+     - And yes… I know you’re reading this right now. 😏
+
+  If you really want the full experience, close this tab,
+  go back to the simulation, and play it as intended.
+
+  Have fun, Operator.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="SCADA Breach — Cybersecurity Simulation Game">
+<meta property="og:description" content="Defend the national power grid from a coordinated cyberattack. Are you ready?">
+<meta property="og:image" content="https://scadabreach.com/media/preview.png">
+<meta property="og:url" content="https://scadabreach.com">
+<meta property="og:type" content="website">
+  <title>SCADAbreach</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" href="css/style.css" />
+<!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://plausible.io/js/pa-F5tq5R_GoX7tjdGDIsyVM.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+
+</head>
+<body>
+<div id="mobile-warning">
+  ⚠️ This simulation is designed for desktop/laptop screens.
+</div>
+
+  <div class="app">
+    <!-- Tabs -->
+    <header class="tabbar" role="tablist" aria-label="Application panels">
+      <!-- 1) Terminal – first & active -->
+      <button class="tab is-active" role="tab" aria-selected="true" aria-controls="panel-terminal" id="tab-terminal">
+        <span class="tab-icon" aria-hidden="true">💻</span>
+        <span class="tab-title">Console</span>
+        <span class="tab-close" aria-label="Close tab" hidden>×</span>
+      </button>
+
+      <!-- 2) Mail -->
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-mail" id="tab-mail">
+        <span class="tab-icon" aria-hidden="true">✉</span>
+        <span class="tab-title">Mail</span>
+        <span class="tab-close" aria-label="Close tab" hidden>×</span>
+      </button>
+
+      <!-- 3) News -->
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-news" id="tab-news">
+        <span class="tab-icon" aria-hidden="true">📰</span>
+        <span class="tab-title">News</span>
+        <span class="tab-close" aria-label="Close tab" hidden>×</span>
+      </button>
+
+      <!-- 4) Blue Team -->
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-blue" id="tab-blue">
+        <span class="tab-icon" aria-hidden="true">🛡</span>
+        <span class="tab-title">Blue Team</span>
+        <span class="tab-close" aria-label="Close tab" hidden>×</span>
+      </button>
+
+      <!-- 5) Power Plant -->
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-power" id="tab-power">
+        <span class="tab-icon" aria-hidden="true">⚡</span>
+        <span class="tab-title">Power Plant</span>
+        <span class="tab-close" aria-label="Close tab" hidden>×</span>
+      </button>
+
+      <!-- 6) Information -->
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-info" id="tab-info">
+        <span class="tab-icon" aria-hidden="true">ℹ</span>
+        <span class="tab-title">Info</span>
+        <span class="tab-close" aria-label="Close tab" hidden>×</span>
+      </button>
+
+      <div class="tabbar-spacer" aria-hidden="true"></div>
+     <!-- <button class="tab-add" title="New tab" aria-label="New tab">+</button> -->
+
+    </header>
+
+    <!-- Panels -->
+    <main class="viewport">
+      <!-- Terminal panel – active on start -->
+<section class="panel is-active" id="panel-terminal" role="tabpanel" aria-labelledby="tab-terminal">
+  <div class="panel-row">
+    <!-- LEFT: Terminal -->
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green"></span>
+        <span class="title">SCADA@sim:~</span>
+      </div>
+      <div class="terminal-body" id="terminal-body" aria-live="polite"></div>
+      <div class="terminal-input">
+        <span class="prompt">$</span>
+        <input id="terminal-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal input" />
+      </div>
+    </div>
+
+  <!-- RIGHT: Map + Mini news -->
+  <div class="side-column">
+    <div class="side-map">
+      <canvas id="world-map" width="800" height="400" aria-label="World map status"></canvas>
+    </div>
+
+    <div class="mini-news">
+      <div class="mini-news-header">
+        <span>Latest news</span>
+        <a href="#" id="mini-news-open-news">View all →</a>
+      </div>
+      <div class="mini-news-list" id="mini-news-list" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+      <!-- Mail  -->
+<section class="panel" id="panel-mail" role="tabpanel" aria-labelledby="tab-mail" hidden>
+  <div class="mail-app">
+    <!-- LEFT: Folders -->
+    <aside class="mail-sidebar">
+      <button class="compose-btn" id="mail-compose">+ Compose</button>
+      <nav class="mail-folders" id="mail-folders">
+        <button data-box="inbox" class="is-active">Inbox <span class="badge" id="unread-count">0</span></button>
+        <button data-box="starred">Starred</button>
+        <button data-box="sent">Sent</button>
+        <button data-box="drafts">Drafts</button>
+        <button data-box="spam">Spam</button>
+        <button data-box="trash">Trash</button>
+      </nav>
+    </aside>
+
+    <!-- MIDDLE+RIGHT -->
+    <div class="mail-main">
+      <header class="mail-toolbar">
+        <input id="mail-search" type="search" placeholder="Search mail…" />
+        <div class="toolbar-actions">
+          <button id="mark-read">Mark read</button>
+          <button id="delete">Delete</button>
+        </div>
+      </header>
+
+      <div class="mail-content">
+        <!-- MIDDLE: List -->
+        <ul class="mail-list" id="mail-list" aria-label="Message list"></ul>
+
+        <!-- RIGHT: Reader -->
+        <article class="mail-view" id="mail-view" aria-live="polite">
+          <div class="placeholder">Select a message to preview</div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simple compose modal  -->
+  <dialog id="compose-dialog">
+    <form method="dialog" class="compose-form">
+      <h3>New message</h3>
+      <input type="email" placeholder="To" />
+      <input type="text" placeholder="Subject" />
+      <textarea rows="10" placeholder="Message…"></textarea>
+      <div class="compose-actions">
+        <button value="cancel">Cancel</button>
+        <button value="send">Send</button>
+      </div>
+    </form>
+  </dialog>
+</section>
+
+      <!-- News  -->
+<section class="panel" id="panel-news" role="tabpanel" aria-labelledby="tab-news" hidden>
+  <div class="news-page">
+
+    <!-- Ad slot: Top banner -->
+<div class="ad ad-top">
+  <video autoplay muted loop playsinline>
+    <source src="media/banner/top_banner.mp4" type="video/mp4">
+  </video>
+</div>
+
+    <!-- Hero section -->
+ <h1 class="news-heading">Latest News</h1>
+    <div class="news-hero" id="news-hero">
+      <article class="hero-article" id="news-hero-main">
+        <div id="news-hero-media" class="hero-media" aria-label="Hero media"></div>
+<figcaption class="hero-caption">BlackOut Situation Room – Live feed</figcaption>
+        <h2>Main headline goes here</h2>
+        <p>Lead text for the main story...</p>
+      </article>
+
+      <div class="hero-side" id="news-hero-side">
+        <article>
+          <h3>Secondary headline 1</h3>
+          <p>Short lead text...</p>
+        </article>
+        <article>
+          <h3>Secondary headline 2</h3>
+          <p>Short lead text...</p>
+        </article>
+      </div>
+    </div>
+
+<!-- Ad slot: Under hero -->
+<div class="ad ad-hero">
+  <img src="media/banner/Talk_show.png" alt="Talk Show banner" loading="lazy">
+</div>
+
+    <!-- Content grid -->
+    <div class="news-content">
+      <div class="news-list" id="news-grid">
+        <article>
+          <h4>Sample article title</h4>
+          <p>Lorem ipsum dolor sit amet...</p>
+        </article>
+        <article>
+          <h4>Another article</h4>
+          <p>Lorem ipsum dolor sit amet...</p>
+        </article>
+        
+      </div>
+      <aside class="news-sidebar">
+        <!-- Ad slot: Sidebar 1 -->
+<div class="ad ad-sidebar">
+  <a class="ad-link" href="https://tapboommaster.com/" target="_blank" rel="noopener noreferrer">
+    <img src="media/tapboom.webp" alt="Advertisement 1" width="300" height="250">
+  </a>
+</div>
+
+        <!-- Ad slot: Sidebar 2 -->
+        <div class="ad ad-sidebar">
+<img src="media/house.webp" alt="Advertisement 1" width="300" height="250">
+</div>
+      </aside>
+    </div>
+
+<!-- Category sections (filled by JS) -->
+<div class="news-sections" id="news-sections"></div>
+
+  </div>
+</section>
+
+      <!-- Blue Team (hidden initially) -->
+<section class="panel" id="panel-blue" role="tabpanel" aria-labelledby="tab-blue" hidden>
+  <div class="blue-team-app">
+    <!-- Logs -->
+    <div class="bt-logs">
+      <h2>Event Logs</h2>
+      <table id="bt-log-table">
+        <thead>
+          <tr><th>Time</th><th>Source</th><th>Event</th><th>Severity</th></tr>
+        </thead>
+        <tbody>
+          <!-- JS fills rows -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Alerts -->
+    <div class="bt-alerts">
+      <h2>Active Alerts</h2>
+      <div class="alert-cards" id="bt-alert-cards">
+        <!-- JS fills cards -->
+      </div>
+    </div>
+
+<!-- Blue Team Learning Hub -->
+<div class="bt-training">
+  <h2>Blue Team Learning Hub</h2>
+  <div id="bt-training-content">
+    <!-- Content injected by JS -->
+  </div>
+</div>
+
+</section>
+
+<!-- Power Plant -->
+<section class="panel" id="panel-power" role="tabpanel" aria-labelledby="tab-power" hidden>
+  <div class="power-app">
+    
+    <!-- LEFT: Plant list -->
+    <aside class="pp-list">
+      <input type="search" id="pp-search" placeholder="Search plants…" />
+      <ul id="pp-list">
+        <!-- JS will fill with 40 plants -->
+      </ul>
+    </aside>
+
+    <!-- CENTER: Plant details -->
+    <section class="pp-details" id="pp-details">
+      <h2>Select a plant</h2>
+      <p>Click on a plant in the list to view its description and telemetry.</p>
+    </section>
+
+    <!-- RIGHT: Controls + telemetry -->
+    <aside class="pp-controls">
+<!-- INDICATORS  -->
+<div class="pp-indicators">
+  <ul id="pp-indicators-list">
+    <li>Output Power: <span id="pp-power">—</span></li>
+    <li>Frequency: <span id="pp-freq">—</span></li>
+    <li>Voltage: <span id="pp-voltage">—</span></li>
+    <li>Core Temp: <span id="pp-temp">—</span></li>
+    <li>Status: <span id="pp-status" class="status-normal">Normal</span></li>
+  </ul>
+</div>
+    
+  <h2>Controls</h2>
+      <button id="pp-shutdown" class="danger">Emergency Shutdown</button>
+<!--
+      <div class="switches">
+        <label><input type="checkbox" id="pp-fuel" checked> Fuel Pumps</label>
+        <label><input type="checkbox" id="pp-cooling" checked> Cooling</label>
+      </div>
+-->
+      <div id="pp-alarm" class="alarm">No alarms</div>
+
+      <h2>Grid Status Legend</h2>
+<div id="pp-telemetry-help" class="pp-telemetry-help"></div>
+      <canvas id="pp-chart-power" width="400" height="150"></canvas>
+      <canvas id="pp-chart-freq" width="400" height="150"></canvas>
+    </aside>
+
+  </div>
+</section>
+<!-- Information  -->
+<section class="panel" id="panel-info" role="tabpanel" aria-labelledby="tab-info" hidden>
+  <h1>Information</h1>
+  <p>
+    Welcome to the SCADABreach simulation environment.
+    This platform is designed purely for <strong>educational and training purposes</strong>.
+  </p>
+
+  <p>
+    All systems, events, names, locations, and infrastructure presented inside the simulation
+    are <strong>fictional</strong> and exist solely to model realistic cybersecurity and ICS/OT scenarios.
+  </p>
+
+  <p>
+    There is <strong>no autosave</strong> — your progress is <strong>not</strong> stored between sessions.
+  </p>
+
+  <p>
+    If you are inspecting the source code: remember that the entire scenario is fully solvable
+    through normal gameplay. Reading internal scripts may spoil the experience.
+  </p>
+
+  <h2>Getting Started</h2>
+
+  <pre class="disclaimer-command">systemctl stop scada-agent australia-australisnova</pre>
+
+  <p>
+    Begin in the Console tab and follow the unfolding events.<br>
+    Your actions influence the environment — stay observant.
+  </p>
+
+  <h2>About the Simulation</h2>
+
+  <p>
+    <strong>SCADABreach</strong> is an interactive cybersecurity simulation that blends elements of
+    red teaming, incident response, OSINT analysis, ICS/OT monitoring, and a dynamic narrative
+    unfolding during a large-scale energy crisis.
+  </p>
+
+  <p>
+    This is not a traditional game or a typical CTF.<br>
+    It is a <strong>self-contained cyber range</strong> that allows players to:
+  </p>
+
+  <ul>
+    <li>work inside a simulated Linux terminal with a realistic file system,</li>
+    <li>analyze system logs and alerts,</li>
+    <li>investigate phishing and ransomware scenarios,</li>
+    <li>monitor power plants and respond to operational incidents,</li>
+    <li>track global events through dynamic news feeds,</li>
+    <li>uncover the story through actions rather than forced dialogue.</li>
+  </ul>
+
+  <p>
+    Everything happens locally in your browser — no installation, no external tools required.
+    The experience is designed to feel like operating a real SOC console, red team toolkit,
+    and ICS monitoring system in a single cohesive environment.
+  </p>
+
+  <h2>Why This Project Exists</h2>
+
+  <p>
+    I've always been passionate about cybersecurity and immersive, realistic training.
+    I wanted to build something that sits between:
+  </p>
+
+  <ul>
+    <li>simple CTF challenges,</li>
+    <li>overly technical lab environments,</li>
+    <li>and enterprise-grade cyber ranges that few people have access to.</li>
+  </ul>
+
+  <p>
+    The goal was to create an experience that:
+  </p>
+
+  <ul>
+    <li>feels like a real operator’s workstation,</li>
+    <li>behaves like an actual system,</li>
+    <li>is approachable to newcomers,</li>
+    <li>and challenging for experienced players.</li>
+  </ul>
+
+  <h2>About Me</h2>
+
+  <p>
+    I am a cybersecurity enthusiast with an analytical mindset, constantly learning,
+    experimenting, and developing my skills.  
+    I enjoy projects that require logical thinking, patience, and creativity —
+    and SCADABreach is the result of that passion.
+  </p>
+
+  <h2>Contact</h2>
+
+  <p>
+    If you want to share feedback, report an issue, suggest a feature, or simply talk about the project,
+    feel free to reach out.
+  </p>
+
+  <p>
+    📧 <strong>Email:</strong><br>
+    <code>arturkret44@gmail.com</code>
+  </p>
+
+  <p>
+    Every message is appreciated — SCADABreach was created for the community,
+    and your insight truly matters.
+  </p>
+
+  <h2>Feedback & Collaboration</h2>
+
+  <p>
+    Whether you are a:
+  </p>
+
+  <ul>
+    <li>player,</li>
+    <li>pentester,</li>
+    <li>SOC analyst,</li>
+    <li>ICS/OT specialist,</li>
+    <li>content creator,</li>
+    <li>or simply a curious mind…</li>
+  </ul>
+
+  <p>
+    …you are welcome to contribute ideas, test the environment,
+    or discuss potential collaboration.
+  </p>
+
+  <p>
+    Community feedback helps SCADABreach grow and evolve.
+  </p>
+
+  <h2>Roadmap</h2>
+
+  <p>
+    This is only the beginning.  
+    More content will be added over time, including:
+  </p>
+
+  <ul>
+    <li>new scenarios,</li>
+    <li>expanded mechanics,</li>
+    <li>additional features,</li>
+    <li>and world-building updates.</li>
+  </ul>
+
+  <p>
+    Thank you for playing.<br>
+    Stay focused — where others see chaos, you see the signal.
+  </p>
+</section>
+
+<!-- ===== DISCLAIMER MODAL ===== -->
+<div id="disclaimer-backdrop" class="disclaimer-backdrop">
+  <div class="disclaimer-modal">
+    <h2>Important Notice</h2>
+
+    <p>
+      This simulation is intended <strong>strictly for educational and training purposes</strong>.
+      All systems, events, names, infrastructure and scenarios presented here are
+      <strong>fictional</strong> and do not represent real-world organizations or systems.
+    </p>
+
+    <p>
+      This environment simulates security operations and industrial processes.
+      The game <strong>does not save progress</strong> — there is <strong>no autosave</strong>.
+    </p>
+
+    <p>
+      You do <strong>not</strong> need to inspect or read the website’s source code to progress.
+      All objectives, clues, and mechanics are intended to be discovered
+      <strong>through normal gameplay only</strong>.  
+      Looking into the source code will only <strong>spoil the scenario for yourself</strong>.
+    </p>
+
+    <p>To begin the scenario, enter the following command in the console:</p>
+
+    <pre class="disclaimer-command">systemctl stop scada-agent australia-australisnova</pre>
+
+    <label class="disclaimer-check">
+      <input type="checkbox" id="disclaimer-accept-check">
+      I understand and agree
+    </label>
+
+    <button id="disclaimer-accept" disabled>Start Simulation</button>
+  </div>
+</div>
+<!-- 
+  FINAL WARNING – LAST CHANCE TO TURN BACK ⚠️
+
+  If you're reading this part of the source code,
+  you're dangerously close to spoiling the entire scenario.
+
+  The scripts below contain logic, event triggers, timelines,
+  and key mechanics that drive the whole simulation.
+
+  In other words:
+     → This is where the answers begin.
+     → This is where the mystery ends.
+     → And this is where you officially stop playing fair. 😉
+
+  I know you're trying hard — but try harder, Operator.
+  You can beat this scenario without looking here. Really.
+
+  If you truly want the full experience,
+  stop reading and return to the simulation now.
+
+  Your curiosity is understandable.
+  But your victory will feel a lot better if you earn it.
+-->
+
+  <!-- Scripts -->
+  <script src="js/tabs.js" defer></script>
+  <script src="js/terminal.js" defer></script>
+  <script src="js/simproc.js" defer></script>
+  <script src="js/ransom.js" defer></script>
+<script src="js/ransom.news.presets.js" defer></script>
+<script src="js/phish_scenario.js" defer></script> 
+ <script src="js/mail.js" defer></script>
+<script src="js/plant-state.js" defer></script>
+  <script src="js/power.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <script src="js/map.js" defer></script>
+  <script src="js/news.js" defer></script>
+<script src="js/news.content.js"></script>
+<script src="js/news.viewer.js"></script>
+  <script src="js/news.sections.js" defer></script>
+  <script src="js/blue-data.js" defer></script>
+  <script src="js/blue-ui.js" defer></script>
+<script src="js/blue-training.js" defer></script>
+
+</body>
+</html>
