@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/banner.png" width="100%" />
+  <img src="media/preview/banner.png" width="100%" />
 </p>
 # ⚡ PowerGrid Cyber Crisis — OT/ICS Cyber Range Game
 
