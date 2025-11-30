@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="media/banner.png" width="100%" />
+</p>
 # ⚡ PowerGrid Cyber Crisis — OT/ICS Cyber Range Game
 
 Interactive cyber-security simulation & CTF in a fictional continental power grid.
