@@ -54,7 +54,7 @@ Your tools: a terminal, internal email system, live news feeds, blue-team dashbo
 * Regional grid impact
 * Incident chains
 <p align="center">
-  <video src="media/preview/map.mp4" width="600" autoplay loop muted></video>
+  <video src="media/preview/map.gif" width="600" autoplay loop muted></video>
 </p>
 
 ### 🔒 Blue-Team mechanics
